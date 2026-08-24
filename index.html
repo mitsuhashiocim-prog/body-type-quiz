@@ -231,15 +231,30 @@
     font-size:12px;
     color:var(--ink-faint);
     letter-spacing:0.08em;
-    margin:22px 0 8px;
+    margin:22px 0 0;
+    text-align:center;
   }
+  .q-illust{
+    display:flex;
+    justify-content:center;
+    margin:18px 0 20px;
+  }
+  .q-illust img{
+    width:132px;
+    height:132px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid var(--paper-line);
+  }
+  .q-illust.hidden{display:none;}
+
   .q-text{
     font-family:'Shippori Mincho', serif;
     font-size:21px;
     font-weight:700;
     line-height:1.7;
     margin:0 0 28px;
-    min-height:96px;
+    text-align:center;
   }
 
   .options{
@@ -492,12 +507,6 @@
         <p>東洋医学では、心身の状態を「肝・心・脾・肺・腎」という5つの働き（五臓）のバランスでとらえます。ここ1週間の身体の状態について30の質問に答えると、どの臓の働きに乱れが出やすいか、確認できます。</p>
       </div>
 
-      <div class="scale-guide">
-        <div class="g"><span class="n">0</span><span class="l">ない</span></div>
-        <div class="g"><span class="n">1</span><span class="l">時々ある</span></div>
-        <div class="g"><span class="n">2</span><span class="l">よくある</span></div>
-      </div>
-
       <button class="primary" id="startBtn">チェックをはじめる</button>
 
       <p class="disclaimer">本チェックは東洋医学の考え方にもとづくセルフチェックツールであり、医学的な診断ではありません。体調に不安がある場合や症状が続く場合は、医療機関や専門家にご相談ください。</p>
@@ -512,6 +521,11 @@
       </div>
 
       <div class="q-num" id="qNum">Q1</div>
+
+      <div class="q-illust" id="qIllustWrap">
+        <img id="qIllustImg" src="" alt="">
+      </div>
+
       <div class="q-text" id="qText"></div>
 
       <div class="options" id="optionsWrap">
@@ -631,6 +645,16 @@
     '塩辛いものが食べたい'
   ];
 
+  var QUESTION_IMAGES = {
+    0:'images/q01.jpg',
+    1:'images/q02.jpg',
+    2:'images/q03.jpg',
+    3:'images/q04.jpg',
+    4:'images/q05.jpg',
+    5:'images/q06.jpg',
+    6:'images/q07.jpg'
+  };
+
   var QUESTION_ORGAN = [];
   ORGAN_ORDER.forEach(function(k){
     ORGANS[k].questions.forEach(function(i){ QUESTION_ORGAN[i]=k; });
@@ -694,6 +718,18 @@
     document.getElementById('qNum').textContent = 'Q' + (current+1);
     document.getElementById('qText').textContent = QUESTIONS[current];
 
+    var illustWrap = document.getElementById('qIllustWrap');
+    var illustImg = document.getElementById('qIllustImg');
+    var imgSrc = QUESTION_IMAGES[current];
+    if(imgSrc){
+      illustImg.src = imgSrc;
+      illustImg.alt = QUESTIONS[current];
+      illustWrap.classList.remove('hidden');
+    } else {
+      illustImg.src = '';
+      illustWrap.classList.add('hidden');
+    }
+
     var opts = document.querySelectorAll('#optionsWrap .opt');
     opts.forEach(function(o){
       var s = parseInt(o.getAttribute('data-score'),10);
@@ -723,7 +759,7 @@
 
     document.getElementById('topOrganName').textContent = topOrgan.kanji;
     document.getElementById('topOrganName').style.color = 'var(' + topOrgan.colorVar + ')';
-    document.getElementById('topOrganYomi').textContent = topOrgan.yomi + '（' + topOrgan.element + '）の働きに乱れが出やすい傾向です';
+    document.getElementById('topOrganYomi').textContent = topOrgan.kanji + '（' + topOrgan.element + '）の働きに乱れが出やすい傾向です';
 
     renderChart(scores);
     renderScoreList(scores, ranked);
