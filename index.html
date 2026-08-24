@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>体質チェック｜五臓セルフ診断</title>
+<meta name="description" content="東洋医学の五臓論（肝・心・脾・肺・腎）に基づく30問のセルフチェック。星形のレーダーチャートで体質の傾向がわかります。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EDE8DA;
+    --paper:#FBF9F2;
+    --paper-line:rgba(42,36,28,0.10);
+    --ink:#2A241C;
+    --ink-soft:#6B6255;
+    --ink-faint:#9A917F;
+
+    --moku:#3F6B4A;   /* 肝・木 */
+    --moku-bg:#E4EDE3;
+    --moku-deep:#25452F;
+
+    --hi:#B5432A;     /* 心・火 */
+    --hi-bg:#F5E3DB;
+    --hi-deep:#7A2A18;
+
+    --do:#B4881F;     /* 脾・土 */
+    --do-bg:#F3EAD3;
+    --do-deep:#7A5C10;
+
+    --kin:#6E7268;    /* 肺・金 */
+    --kin-bg:#EAEAE3;
+    --kin-deep:#43463D;
+
+    --sui:#2C4258;    /* 腎・水 */
+    --sui-bg:#DFE5EB;
+    --sui-deep:#182A3A;
+
+    --radius:14px;
+    --shadow:0 1px 2px rgba(42,36,28,0.06);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(42,36,28,0.035) 0, transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(42,36,28,0.035) 0, transparent 40%);
+    color:var(--ink);
+    font-family:'Noto Sans JP', sans-serif;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:32px 20px 64px;
+  }
+
+  .brandline{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .brandline .mark{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:15px;
+    letter-spacing:0.14em;
+    color:var(--ink-soft);
+  }
+  .brandline .step-indicator{
+    font-size:12px;
+    color:var(--ink-faint);
+    letter-spacing:0.05em;
+  }
+
+  .sheet{
+    background:var(--paper);
+    border:1px solid var(--paper-line);
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    padding:36px 28px;
+    position:relative;
+  }
+  .sheet::before{
+    content:"";
+    position:absolute;
+    top:14px; left:14px; right:14px; bottom:14px;
+    border:1px solid rgba(42,36,28,0.06);
+    border-radius:12px;
+    pointer-events:none;
+  }
+
+  h1.title{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:28px;
+    letter-spacing:0.04em;
+    margin:0 0 6px;
+    line-height:1.5;
+  }
+  .lede{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin:0 0 26px;
+  }
+
+  .hero-tree{
+    display:flex;
+    justify-content:center;
+    margin:0 0 28px;
+  }
+  .hero-tree svg{max-width:100%; height:auto;}
+
+  .intro-block p{
+    font-size:14.5px;
+    color:var(--ink);
+    margin:0 0 14px;
+  }
+  .intro-block .scale-guide{
+    display:flex;
+    gap:10px;
+    margin:20px 0 28px;
+    flex-wrap:wrap;
+  }
+  .scale-guide .g{
+    flex:1;
+    min-width:96px;
+    background:var(--bg);
+    border-radius:10px;
+    padding:10px 12px;
+    text-align:center;
+  }
+  .scale-guide .g .n{
+    font-family:'Shippori Mincho', serif;
+    font-size:20px;
+    font-weight:800;
+    display:block;
+  }
+  .scale-guide .g .l{
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  .disclaimer{
+    font-size:12px;
+    color:var(--ink-faint);
+    border-top:1px solid var(--paper-line);
+    padding-top:16px;
+    margin-top:24px;
+  }
+
+  button.primary{
+    display:block;
+    width:100%;
+    margin-top:26px;
+    padding:16px 20px;
+    border:none;
+    border-radius:12px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Noto Sans JP', sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    letter-spacing:0.03em;
+    cursor:pointer;
+    transition:transform 0.15s ease, opacity 0.15s ease;
+  }
+  button.primary:active{transform:scale(0.98); opacity:0.9;}
+
+  button.ghost{
+    display:block;
+    width:100%;
+    margin-top:12px;
+    padding:13px 20px;
+    border:1px solid var(--paper-line);
+    border-radius:12px;
+    background:transparent;
+    color:var(--ink-soft);
+    font-family:'Noto Sans JP', sans-serif;
+    font-weight:500;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  /* ---- quiz ---- */
+  .progress-track{
+    height:5px;
+    background:var(--bg);
+    border-radius:4px;
+    overflow:hidden;
+    margin-bottom:8px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--ink);
+    border-radius:4px;
+    transition:width 0.35s ease;
+  }
+  .progress-meta{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-bottom:22px;
+  }
+  .chapter-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:13px;
+    padding:5px 12px;
+    border-radius:20px;
+  }
+  .chapter-badge .dot{
+    width:8px; height:8px; border-radius:50%;
+  }
+
+  .q-num{
+    font-size:12px;
+    color:var(--ink-faint);
+    letter-spacing:0.08em;
+    margin:22px 0 8px;
+  }
+  .q-text{
+    font-family:'Shippori Mincho', serif;
+    font-size:21px;
+    font-weight:700;
+    line-height:1.7;
+    margin:0 0 28px;
+    min-height:96px;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 18px;
+    border:1.5px solid var(--paper-line);
+    border-radius:12px;
+    background:var(--paper);
+    cursor:pointer;
+    font-size:15px;
+    font-weight:500;
+    color:var(--ink);
+    transition:border-color 0.15s ease, background 0.15s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .opt:hover{border-color:var(--ink-faint);}
+  .opt.selected{
+    border-color:var(--ink);
+    background:var(--bg);
+  }
+  .opt .score-chip{
+    font-family:'Shippori Mincho', serif;
+    font-size:12px;
+    color:var(--ink-faint);
+  }
+
+  .nav-row{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+  }
+  .nav-row button{margin-top:0;}
+  .nav-row .back-btn{flex:0 0 auto; width:auto; padding:13px 20px;}
+
+  /* ---- result ---- */
+  .lead-organ{
+    text-align:center;
+    margin-bottom:8px;
+  }
+  .lead-organ .kicker{
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--ink-faint);
+  }
+  .lead-organ .name{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:40px;
+    margin:6px 0 2px;
+  }
+  .lead-organ .yomi{
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+
+  .chart-wrap{
+    margin:26px 0 10px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .score-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin:20px 0 8px;
+  }
+  .score-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .score-row .lbl{
+    width:46px;
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:14px;
+    flex:0 0 auto;
+  }
+  .score-row .bar-track{
+    flex:1;
+    height:9px;
+    background:var(--bg);
+    border-radius:5px;
+    overflow:hidden;
+  }
+  .score-row .bar-fill{
+    height:100%;
+    border-radius:5px;
+  }
+  .score-row .val{
+    width:46px;
+    text-align:right;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    flex:0 0 auto;
+  }
+
+  .divider{
+    border:none;
+    border-top:1px solid var(--paper-line);
+    margin:30px 0;
+  }
+
+  .organ-card{
+    border-radius:14px;
+    padding:20px 20px 22px;
+    margin-bottom:14px;
+    border:1px solid var(--paper-line);
+  }
+  .organ-card-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .seal{
+    width:40px; height:40px;
+    border-radius:50%;
+    border:2px solid currentColor;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:17px;
+    flex:0 0 auto;
+  }
+  .organ-card-head .oc-title{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size:16.5px;
+  }
+  .organ-card-head .oc-score{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .organ-card p.desc{
+    font-size:13.5px;
+    color:var(--ink);
+    margin:0 0 14px;
+  }
+  .corr-table{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .corr-table .ct{
+    background:rgba(255,255,255,0.5);
+    border-radius:8px;
+    text-align:center;
+    padding:7px 2px;
+  }
+  .corr-table .ct .k{
+    font-size:10px;
+    opacity:0.75;
+    display:block;
+  }
+  .corr-table .ct .v{
+    font-family:'Shippori Mincho', serif;
+    font-size:13px;
+    font-weight:700;
+    margin-top:2px;
+  }
+  .tag-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:12px;
+  }
+  .tag{
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.6);
+    border:1px solid currentColor;
+  }
+  .tag.strong{font-weight:700;}
+  .no-symptom{
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin-bottom:12px;
+  }
+  .care-note{
+    font-size:12.5px;
+    border-top:1px solid rgba(42,36,28,0.08);
+    padding-top:12px;
+    display:flex;
+    gap:8px;
+  }
+  .care-note .cn-label{
+    flex:0 0 auto;
+    font-weight:700;
+  }
+
+  .card-moku{background:var(--moku-bg); color:var(--moku-deep);}
+  .card-hi{background:var(--hi-bg); color:var(--hi-deep);}
+  .card-do{background:var(--do-bg); color:var(--do-deep);}
+  .card-kin{background:var(--kin-bg); color:var(--kin-deep);}
+  .card-sui{background:var(--sui-bg); color:var(--sui-deep);}
+
+  .hidden{display:none !important;}
+
+  footer.foot{
+    text-align:center;
+    margin-top:24px;
+    font-size:11.5px;
+    color:var(--ink-faint);
+  }
+
+  @media (max-width:400px){
+    .sheet{padding:26px 18px;}
+    h1.title{font-size:24px;}
+    .lead-organ .name{font-size:34px;}
+    .corr-table{grid-template-columns:repeat(5,1fr); gap:4px;}
+    .corr-table .ct .k{font-size:9px;}
+    .corr-table .ct .v{font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brandline">
+    <span class="mark">体質チェック</span>
+    <span class="step-indicator" id="stepIndicator"></span>
+  </div>
+
+  <div class="sheet">
+
+    <!-- ========== START ========== -->
+    <section id="screen-start">
+      <h1 class="title">五臓セルフチェック</h1>
+      <p class="lede">東洋医学の「五臓論」にもとづく30問の体質チェックです。</p>
+
+      <div class="hero-tree">
+        <img src="gozo-tree.png" alt="肝を幹、心を炎、腎を雫、肺と脾を周囲に配した五行の木のイラスト" style="max-width:220px; width:100%; height:auto; border-radius:50%;">
+      </div>
+
+      <div class="intro-block">
+        <p>東洋医学では、心身の状態を「肝・心・脾・肺・腎」という5つの働き（五臓）のバランスでとらえます。ここ1週間の身体の状態について30の質問に答えると、どの臓の働きに乱れが出やすいか、確認できます。</p>
+      </div>
+
+      <div class="scale-guide">
+        <div class="g"><span class="n">0</span><span class="l">ない</span></div>
+        <div class="g"><span class="n">1</span><span class="l">時々ある</span></div>
+        <div class="g"><span class="n">2</span><span class="l">よくある</span></div>
+      </div>
+
+      <button class="primary" id="startBtn">チェックをはじめる</button>
+
+      <p class="disclaimer">本チェックは東洋医学の考え方にもとづくセルフチェックツールであり、医学的な診断ではありません。体調に不安がある場合や症状が続く場合は、医療機関や専門家にご相談ください。</p>
+    </section>
+
+    <!-- ========== QUIZ ========== -->
+    <section id="screen-quiz" class="hidden">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-meta">
+        <span></span>
+        <span id="progressText">1 / 30</span>
+      </div>
+
+      <div class="q-num" id="qNum">Q1</div>
+      <div class="q-text" id="qText"></div>
+
+      <div class="options" id="optionsWrap">
+        <div class="opt" data-score="0"><span>ない</span><span class="score-chip">0点</span></div>
+        <div class="opt" data-score="1"><span>時々ある</span><span class="score-chip">1点</span></div>
+        <div class="opt" data-score="2"><span>よくある</span><span class="score-chip">2点</span></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="ghost back-btn" id="backBtn">戻る</button>
+      </div>
+    </section>
+
+    <!-- ========== RESULT ========== -->
+    <section id="screen-result" class="hidden">
+      <div class="lead-organ">
+        <div class="kicker">最も乱れが出やすい五臓</div>
+        <div class="name" id="topOrganName">－</div>
+        <div class="yomi" id="topOrganYomi"></div>
+      </div>
+
+      <div class="chart-wrap" id="chartWrap"></div>
+
+      <div class="score-list" id="scoreList"></div>
+
+      <hr class="divider">
+
+      <div id="organCards"></div>
+
+      <button class="ghost" id="restartBtn">もう一度チェックする</button>
+
+      <p class="disclaimer">本チェックは東洋医学の五臓論にもとづくセルフチェックであり、医学的な診断ではありません。あくまで体質傾向を知るための目安としてご活用ください。気になる症状が続く場合は、医療機関や鍼灸師などの専門家にご相談ください。</p>
+    </section>
+
+  </div>
+
+  <footer class="foot">五臓セルフチェック</footer>
+</div>
+
+<script>
+(function(){
+
+  var ORGANS = {
+    moku: {
+      key:'moku', kanji:'肝', yomi:'かん', element:'木', label:'肝', range:[0,5],
+      colorVar:'--moku', bgVar:'--moku-bg', deepVar:'--moku-deep', cardClass:'card-moku',
+      desc:'「疏泄（そせつ）」＝気の巡りをスムーズに保つ働きを担います。乱れると気が滞り、イライラや頭痛、喉のつまり感などが出やすくなります。',
+      correspond:{五官:'目', 五体:'筋', 五味:'酸', 五役:'色', 五華:'爪'},
+      care:'ストレスを溜め込まず、気分転換や深呼吸の時間を意識的につくりましょう。',
+      questions:[0,1,2,3,4,5]
+    },
+    hi: {
+      key:'hi', kanji:'心', yomi:'しん', element:'火', label:'心', range:[6,11],
+      colorVar:'--hi', bgVar:'--hi-bg', deepVar:'--hi-deep', cardClass:'card-hi',
+      desc:'「主血（しゅけつ）」で全身に血を巡らせ、「神志を主る」で精神活動と眠りの質を司ります。乱れると動悸や不整脈感、夢が多い・途中で目が覚めるといった睡眠の乱れが出やすくなります。',
+      correspond:{五官:'舌', 五体:'血脈', 五味:'苦', 五役:'臭', 五華:'面色'},
+      care:'就寝前はスマートフォンやカフェインを控え、心身がゆるむ時間を確保しましょう。',
+      questions:[6,7,8,9,10,11]
+    },
+    do: {
+      key:'do', kanji:'脾', yomi:'ひ', element:'土', label:'脾', range:[12,17],
+      colorVar:'--do', bgVar:'--do-bg', deepVar:'--do-deep', cardClass:'card-do',
+      desc:'「運化（うんか）」で飲食物を消化吸収し、「昇清（しょうせい）」で栄養を全身に届け、「統血（とうけつ）」で血が血管の外に漏れないよう統率します。乱れると食欲不振や軟便、内出血しやすいなどが出やすくなります。',
+      correspond:{五官:'口', 五体:'肌肉', 五味:'甘', 五役:'味', 五華:'唇'},
+      care:'冷たい飲食物を摂りすぎず、決まった時間に食事をとることを心がけましょう。',
+      questions:[12,13,14,15,16,17]
+    },
+    kin: {
+      key:'kin', kanji:'肺', yomi:'はい', element:'金', label:'肺', range:[18,23],
+      colorVar:'--kin', bgVar:'--kin-bg', deepVar:'--kin-deep', cardClass:'card-kin',
+      desc:'「宣発（せんぱつ）」で気と水分を体表に巡らせ、「粛降（しゅくこう）」で呼吸を整え、「主気（しゅき）」で全身の気を統括します。乱れると咳や痰、呼吸のしづらさ、汗の異常などが出やすくなります。',
+      correspond:{五官:'鼻', 五体:'皮毛', 五味:'辛', 五役:'声', 五華:'毛'},
+      care:'室内の乾燥を避け、ゆっくりとした深呼吸で呼吸のリズムを整えましょう。',
+      questions:[18,19,20,21,22,23]
+    },
+    sui: {
+      key:'sui', kanji:'腎', yomi:'じん', element:'水', label:'腎', range:[24,29],
+      colorVar:'--sui', bgVar:'--sui-bg', deepVar:'--sui-deep', cardClass:'card-sui',
+      desc:'「蔵精（ぞうせい）」で生命エネルギーの源となる精を蓄え、成長・生殖を支え、「主水（しゅすい）」で全身の水分代謝を調整します。乱れると足腰のだるさや排尿トラブル、生殖機能の異常などが出やすくなります。',
+      correspond:{五官:'耳', 五体:'骨髄', 五味:'鹹', 五役:'液', 五華:'髪'},
+      care:'無理を重ねず、体を冷やさないようにして十分な休養をとりましょう。',
+      questions:[24,25,26,27,28,29]
+    }
+  };
+  var ORGAN_ORDER = ['moku','hi','do','kin','sui'];
+
+  var QUESTIONS = [
+    '目の症状がある（かすみ、疲れ、乾燥感など）',
+    'こむら返りがよくおこる',
+    '酸っぱいものが食べたい',
+    'イライラしやすい',
+    '側頭部や頭頂部の頭痛がある',
+    '咽喉のつまり感がある',
+    '夢を多くみる',
+    '睡眠中に中途覚醒する',
+    '舌の症状がある（舌炎、しびれ、違和感など）',
+    '胸の症状がある（動悸、違和感、圧迫感など）',
+    '脈が飛ぶ',
+    '苦いものが食べたい',
+    '食欲不振がある',
+    '軟便や下痢をする',
+    '味がわかりにくい',
+    '内出血が起こりやすい',
+    'むくみやすい',
+    '甘いものが食べたい',
+    '咳や痰がでる',
+    '呼吸症状がある（息苦しさ、ゼイゼイするなど）',
+    '鼻の症状がある（鼻閉や鼻汁など）',
+    '肌の症状がある（荒れ、乾燥、オイリー肌など）',
+    '汗をよくかく',
+    '辛い物が食べたい',
+    '足腰がだるい・痛い',
+    '髪の毛がよく抜ける',
+    '尿症状がある（夜間尿、多い、少ないなど）',
+    '耳症状がある（耳鳴り、聞こえにくいなど）',
+    '生殖器の異常がある（月経の異常、EDなど）',
+    '塩辛いものが食べたい'
+  ];
+
+  var QUESTION_ORGAN = [];
+  ORGAN_ORDER.forEach(function(k){
+    ORGANS[k].questions.forEach(function(i){ QUESTION_ORGAN[i]=k; });
+  });
+
+  var answers = new Array(30).fill(null);
+  var current = 0;
+
+  var screenStart = document.getElementById('screen-start');
+  var screenQuiz = document.getElementById('screen-quiz');
+  var screenResult = document.getElementById('screen-result');
+  var stepIndicator = document.getElementById('stepIndicator');
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    current = 0;
+    answers = new Array(30).fill(null);
+    showScreen('quiz');
+    renderQuestion();
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', function(){
+    current = 0;
+    answers = new Array(30).fill(null);
+    showScreen('start');
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function(){
+    if(current > 0){
+      current -= 1;
+      renderQuestion();
+    }
+  });
+
+  document.getElementById('optionsWrap').addEventListener('click', function(e){
+    var opt = e.target.closest('.opt');
+    if(!opt) return;
+    var score = parseInt(opt.getAttribute('data-score'), 10);
+    answers[current] = score;
+    renderQuestion();
+    setTimeout(function(){
+      if(current < 29){
+        current += 1;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }, 220);
+  });
+
+  function showScreen(name){
+    screenStart.classList.toggle('hidden', name !== 'start');
+    screenQuiz.classList.toggle('hidden', name !== 'quiz');
+    screenResult.classList.toggle('hidden', name !== 'result');
+    stepIndicator.textContent = name === 'quiz' ? '' : (name === 'result' ? '結果' : '');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function renderQuestion(){
+    document.getElementById('progressFill').style.width = ((current) / 30 * 100) + '%';
+    document.getElementById('progressText').textContent = (current+1) + ' / 30';
+    document.getElementById('qNum').textContent = 'Q' + (current+1);
+    document.getElementById('qText').textContent = QUESTIONS[current];
+
+    var opts = document.querySelectorAll('#optionsWrap .opt');
+    opts.forEach(function(o){
+      var s = parseInt(o.getAttribute('data-score'),10);
+      o.classList.toggle('selected', answers[current] === s);
+    });
+
+    document.getElementById('backBtn').style.visibility = current === 0 ? 'hidden' : 'visible';
+    stepIndicator.textContent = (current+1) + ' / 30';
+  }
+
+  function computeScores(){
+    var scores = {};
+    ORGAN_ORDER.forEach(function(k){
+      var organ = ORGANS[k];
+      var sum = 0;
+      organ.questions.forEach(function(i){ sum += (answers[i]||0); });
+      scores[k] = sum;
+    });
+    return scores;
+  }
+
+  function showResult(){
+    var scores = computeScores();
+    var ranked = ORGAN_ORDER.slice().sort(function(a,b){ return scores[b]-scores[a]; });
+    var topKey = ranked[0];
+    var topOrgan = ORGANS[topKey];
+
+    document.getElementById('topOrganName').textContent = topOrgan.kanji;
+    document.getElementById('topOrganName').style.color = 'var(' + topOrgan.colorVar + ')';
+    document.getElementById('topOrganYomi').textContent = topOrgan.yomi + '（' + topOrgan.element + '）の働きに乱れが出やすい傾向です';
+
+    renderChart(scores);
+    renderScoreList(scores, ranked);
+    renderOrganCards(scores, ranked);
+
+    showScreen('result');
+  }
+
+  function renderScoreList(scores, ranked){
+    var wrap = document.getElementById('scoreList');
+    wrap.innerHTML = '';
+    ranked.forEach(function(k){
+      var organ = ORGANS[k];
+      var pct = Math.round(scores[k] / 12 * 100);
+      var row = document.createElement('div');
+      row.className = 'score-row';
+      row.innerHTML =
+        '<span class="lbl" style="color:var(' + organ.colorVar + ')">' + organ.kanji + '</span>' +
+        '<span class="bar-track"><span class="bar-fill" style="width:' + pct + '%; background:var(' + organ.colorVar + ')"></span></span>' +
+        '<span class="val">' + scores[k] + ' / 12</span>';
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderOrganCards(scores, ranked){
+    var wrap = document.getElementById('organCards');
+    wrap.innerHTML = '';
+    ranked.forEach(function(k){
+      var organ = ORGANS[k];
+      var card = document.createElement('div');
+      card.className = 'organ-card ' + organ.cardClass;
+
+      var corrHtml = '';
+      Object.keys(organ.correspond).forEach(function(ck){
+        corrHtml += '<div class="ct"><span class="k">' + ck + '</span><span class="v">' + organ.correspond[ck] + '</span></div>';
+      });
+
+      var tagHtml = '';
+      var hasSymptom = false;
+      organ.questions.forEach(function(i){
+        var a = answers[i];
+        if(a && a > 0){
+          hasSymptom = true;
+          tagHtml += '<span class="tag' + (a===2?' strong':'') + '">' + QUESTIONS[i] + (a===2?'（よくある）':'（時々）') + '</span>';
+        }
+      });
+      var symptomBlock = hasSymptom
+        ? '<div class="tag-row">' + tagHtml + '</div>'
+        : '<div class="no-symptom">該当する症状は見られませんでした。</div>';
+
+      card.innerHTML =
+        '<div class="organ-card-head">' +
+          '<div class="seal">' + organ.kanji + '</div>' +
+          '<div><div class="oc-title">' + organ.label + '（' + organ.element + '）</div>' +
+          '<div class="oc-score">' + scores[k] + ' / 12点</div></div>' +
+        '</div>' +
+        '<p class="desc">' + organ.desc + '</p>' +
+        '<div class="corr-table">' + corrHtml + '</div>' +
+        symptomBlock +
+        '<div class="care-note"><span class="cn-label">養生の目安</span><span>' + organ.care + '</span></div>';
+
+      wrap.appendChild(card);
+    });
+  }
+
+  function getCssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function renderChart(scores){
+    var wrap = document.getElementById('chartWrap');
+    var size = 300;
+    var cx = size/2, cy = size/2 + 6;
+    var R = 108;
+    var maxVal = 12;
+    var n = 5;
+    var order = ORGAN_ORDER;
+
+    function pt(i, radius){
+      var angle = -Math.PI/2 + i * (2*Math.PI/n);
+      return { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) };
+    }
+
+    var gridRings = [0.25, 0.5, 0.75, 1.0];
+    var gridPaths = gridRings.map(function(ratio){
+      var pts = [];
+      for(var i=0;i<n;i++){
+        var p = pt(i, R*ratio);
+        pts.push(p.x.toFixed(1) + ',' + p.y.toFixed(1));
+      }
+      return '<polygon points="' + pts.join(' ') + '" fill="none" stroke="rgba(42,36,28,0.14)" stroke-width="1"/>';
+    }).join('');
+
+    var axisLines = '';
+    var labels = '';
+    var colors = {
+      moku:getCssVar('--moku'), hi:getCssVar('--hi'), do:getCssVar('--do'),
+      kin:getCssVar('--kin'), sui:getCssVar('--sui')
+    };
+
+    for(var i=0;i<n;i++){
+      var outer = pt(i, R);
+      axisLines += '<line x1="' + cx + '" y1="' + cy + '" x2="' + outer.x.toFixed(1) + '" y2="' + outer.y.toFixed(1) + '" stroke="rgba(42,36,28,0.16)" stroke-width="1"/>';
+      var lp = pt(i, R + 26);
+      var organ = ORGANS[order[i]];
+      labels += '<text x="' + lp.x.toFixed(1) + '" y="' + lp.y.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-family="Shippori Mincho, serif" font-weight="700" font-size="17" fill="' + colors[order[i]] + '">' + organ.kanji + '</text>';
+    }
+
+    var dataPts = [];
+    var dots = '';
+    for(var j=0;j<n;j++){
+      var val = scores[order[j]] || 0;
+      var ratio = Math.max(val/maxVal, 0.03);
+      var dp = pt(j, R*ratio);
+      dataPts.push(dp.x.toFixed(1) + ',' + dp.y.toFixed(1));
+      dots += '<circle cx="' + dp.x.toFixed(1) + '" cy="' + dp.y.toFixed(1) + '" r="4.5" fill="' + colors[order[j]] + '" stroke="var(--paper)" stroke-width="2"/>';
+    }
+
+    var svg =
+      '<svg width="' + size + '" height="' + (size+20) + '" viewBox="0 0 ' + size + ' ' + (size+20) + '" role="img" aria-label="五臓の得点を示す星形グラフ">' +
+        gridPaths +
+        axisLines +
+        '<polygon points="' + dataPts.join(' ') + '" fill="rgba(42,36,28,0.10)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>' +
+        dots +
+        labels +
+      '</svg>';
+
+    wrap.innerHTML = svg;
+  }
+
+})();
+</script>
+</body>
+</html>
