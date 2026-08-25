@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
-<title>体質チェック｜五臓セルフ診断</title>
-<meta name="description" content="東洋医学の五臓論（肝・心・脾・肺・腎）に基づく30問のセルフチェック。星形のレーダーチャートで体質の傾向がわかります。">
+<title>体質チェック｜東洋医学の五臓論にもとづくセルフチェック</title>
+<meta name="description" content="東洋医学の五臓論（肝・心・脾・肺・腎）にもとづく30問のセルフチェック。結果はレーダーチャートで確認できます。">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cdefs%3E%3ClinearGradient id='w' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%233E9A5C'/%3E%3Cstop offset='50%25' stop-color='%23E14E2B'/%3E%3Cstop offset='100%25' stop-color='%23E8B627'/%3E%3C/linearGradient%3E%3ClinearGradient id='c' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23E8B627'/%3E%3Cstop offset='50%25' stop-color='%23B8BDB4'/%3E%3Cstop offset='100%25' stop-color='%232E5C86'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='20' cy='20' r='18' fill='url(%23c)' stroke='%23fff' stroke-width='1.6'/%3E%3Cpath d='M20,2 A18,18 0 0,1 20,38 A9,9 0 0,1 20,20 A9,9 0 0,0 20,2 Z' fill='url(%23w)'/%3E%3Ccircle cx='20' cy='11' r='3.1' fill='url(%23c)'/%3E%3Ccircle cx='20' cy='29' r='3.1' fill='url(%23w)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -37,6 +38,12 @@
     --sui-bg:#DFE5EB;
     --sui-deep:#182A3A;
 
+    --moku-v:#3E9A5C;
+    --hi-v:#E14E2B;
+    --do-v:#E8B627;
+    --kin-v:#B8BDB4;
+    --sui-v:#2E5C86;
+
     --radius:14px;
     --shadow:0 1px 2px rgba(42,36,28,0.06);
   }
@@ -66,16 +73,44 @@
 
   .brandline{
     display:flex;
-    align-items:baseline;
+    align-items:center;
     justify-content:space-between;
     margin-bottom:22px;
   }
+  .brand-id{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:pointer;
+  }
+  .brand-logo{
+    display:flex;
+    flex:0 0 auto;
+  }
+  .brand-logo svg{display:block;}
   .brandline .mark{
+    display:flex;
+    flex-direction:column;
+    line-height:1.3;
+  }
+  .brandline .mark .mark-pre{
+    display:inline-block;
+    font-size:10px;
+    color:var(--paper);
+    background:var(--sui);
+    padding:2px 8px;
+    border-radius:20px;
+    letter-spacing:0.05em;
+    margin-bottom:5px;
+  }
+  .brandline .mark .mark-main{
     font-family:'Shippori Mincho', serif;
     font-weight:800;
-    font-size:15px;
-    letter-spacing:0.14em;
-    color:var(--ink-soft);
+    font-size:18px;
+    letter-spacing:0.08em;
+    color:var(--ink);
+    display:block;
+    white-space:nowrap;
   }
   .brandline .step-indicator{
     font-size:12px;
@@ -125,30 +160,6 @@
     font-size:14.5px;
     color:var(--ink);
     margin:0 0 14px;
-  }
-  .intro-block .scale-guide{
-    display:flex;
-    gap:10px;
-    margin:20px 0 28px;
-    flex-wrap:wrap;
-  }
-  .scale-guide .g{
-    flex:1;
-    min-width:96px;
-    background:var(--bg);
-    border-radius:10px;
-    padding:10px 12px;
-    text-align:center;
-  }
-  .scale-guide .g .n{
-    font-family:'Shippori Mincho', serif;
-    font-size:20px;
-    font-weight:800;
-    display:block;
-  }
-  .scale-guide .g .l{
-    font-size:12px;
-    color:var(--ink-soft);
   }
 
   .disclaimer{
@@ -213,19 +224,6 @@
     color:var(--ink-faint);
     margin-bottom:22px;
   }
-  .chapter-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    font-family:'Shippori Mincho', serif;
-    font-weight:700;
-    font-size:13px;
-    padding:5px 12px;
-    border-radius:20px;
-  }
-  .chapter-badge .dot{
-    width:8px; height:8px; border-radius:50%;
-  }
 
   .q-num{
     font-size:12px;
@@ -233,6 +231,12 @@
     letter-spacing:0.08em;
     margin:22px 0 0;
     text-align:center;
+  }
+  .q-body{
+    transition:opacity 0.18s ease;
+  }
+  .q-body.fading{
+    opacity:0;
   }
   .q-illust{
     display:flex;
@@ -278,6 +282,7 @@
     -webkit-tap-highlight-color:transparent;
   }
   .opt:hover{border-color:var(--ink-faint);}
+  .opt:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
   .opt.selected{
     border-color:var(--ink);
     background:var(--bg);
@@ -332,10 +337,10 @@
   .score-row{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
   }
   .score-row .lbl{
-    width:46px;
+    width:34px;
     font-family:'Shippori Mincho', serif;
     font-weight:700;
     font-size:14px;
@@ -347,18 +352,42 @@
     background:var(--bg);
     border-radius:5px;
     overflow:hidden;
+    position:relative;
   }
   .score-row .bar-fill{
     height:100%;
     border-radius:5px;
+    position:relative;
+    z-index:1;
+  }
+  .score-row .bar-tick{
+    position:absolute;
+    left:50%;
+    top:0;
+    width:1px;
+    height:100%;
+    background:rgba(42,36,28,0.3);
+    z-index:2;
   }
   .score-row .val{
-    width:46px;
+    width:44px;
     text-align:right;
     font-size:12.5px;
     color:var(--ink-soft);
     flex:0 0 auto;
   }
+  .lv-badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:20px;
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  .lv-badge.lv-stable{background:var(--moku-bg); color:var(--moku-deep);}
+  .lv-badge.lv-mid{background:var(--do-bg); color:var(--do-deep);}
+  .lv-badge.lv-high{background:var(--hi-bg); color:var(--hi-deep);}
 
   .divider{
     border:none;
@@ -482,6 +511,9 @@
     .corr-table .ct .k{font-size:9px;}
     .corr-table .ct .v{font-size:12px;}
     .q-illust img{width:168px; height:168px;}
+    .score-row{gap:6px;}
+    .score-row .val{width:36px; font-size:11.5px;}
+    .lv-badge{font-size:9.5px; padding:2px 6px;}
   }
 </style>
 </head>
@@ -489,7 +521,38 @@
 <div class="wrap">
 
   <div class="brandline">
-    <span class="mark">体質チェック</span>
+    <div class="brand-id" id="brandHome" role="button" tabindex="0" aria-label="トップへ戻る">
+      <span class="brand-logo">
+        <svg width="30" height="30" viewBox="0 0 40 40" role="img" aria-label="体質チェック ロゴ（陰陽）">
+          <defs>
+            <linearGradient id="logoWarm" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="var(--moku-v)"/>
+              <stop offset="50%" stop-color="var(--hi-v)"/>
+              <stop offset="100%" stop-color="var(--do-v)"/>
+            </linearGradient>
+            <linearGradient id="logoCool" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="var(--do-v)"/>
+              <stop offset="50%" stop-color="var(--kin-v)"/>
+              <stop offset="100%" stop-color="var(--sui-v)"/>
+            </linearGradient>
+            <radialGradient id="logoGloss" cx="35%" cy="22%" r="70%">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.6"/>
+              <stop offset="40%" stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="20" cy="20" r="18" fill="url(#logoCool)" stroke="#fff" stroke-width="1.6"/>
+          <path d="M20,2 A18,18 0 0,1 20,38 A9,9 0 0,1 20,20 A9,9 0 0,0 20,2 Z" fill="url(#logoWarm)"/>
+          <circle cx="20" cy="11" r="3.1" fill="url(#logoCool)"/>
+          <circle cx="20" cy="29" r="3.1" fill="url(#logoWarm)"/>
+          <circle cx="20" cy="20" r="18" fill="url(#logoGloss)"/>
+          <circle cx="20" cy="20" r="18" fill="none" stroke="#fff" stroke-width="1.6"/>
+        </svg>
+      </span>
+      <span class="mark">
+        <span class="mark-pre">東洋医学的</span>
+        <span class="mark-main">体質チェック</span>
+      </span>
+    </div>
     <span class="step-indicator" id="stepIndicator"></span>
   </div>
 
@@ -497,8 +560,8 @@
 
     <!-- ========== START ========== -->
     <section id="screen-start">
-      <h1 class="title">五臓セルフチェック</h1>
-      <p class="lede">東洋医学の「五臓論」にもとづく30問の体質チェックです。</p>
+      <h1 class="title">あなたの五臓バランスをチェック</h1>
+      <p class="lede">東洋医学の「五臓論」にもとづく30問の体質チェック表です。</p>
 
       <div class="hero-tree">
         <img src="gozo-tree.png" alt="肝を幹、心を炎、腎を雫、肺と脾を周囲に配した五行の木のイラスト" style="max-width:220px; width:100%; height:auto; border-radius:50%;">
@@ -510,7 +573,7 @@
 
       <button class="primary" id="startBtn">チェックをはじめる</button>
 
-      <p class="disclaimer">本チェックは東洋医学の考え方にもとづくセルフチェックツールであり、医学的な診断ではありません。体調に不安がある場合や症状が続く場合は、医療機関や専門家にご相談ください。</p>
+      <p class="disclaimer">本チェックは東洋医学の五臓論にもとづくセルフチェックであり、医学的な診断ではありません。あくまで体質傾向を知るための目安としてご活用ください。気になる症状が続く場合は、医療機関や鍼灸師などの専門家にご相談ください。</p>
     </section>
 
     <!-- ========== QUIZ ========== -->
@@ -521,18 +584,20 @@
         <span id="progressText">1 / 30</span>
       </div>
 
-      <div class="q-num" id="qNum">Q1</div>
+      <div class="q-body" id="qBody">
+        <div class="q-num" id="qNum">Q1</div>
 
-      <div class="q-illust" id="qIllustWrap">
-        <img id="qIllustImg" src="" alt="">
+        <div class="q-illust" id="qIllustWrap">
+          <img id="qIllustImg" src="" alt="">
+        </div>
+
+        <div class="q-text" id="qText"></div>
       </div>
 
-      <div class="q-text" id="qText"></div>
-
       <div class="options" id="optionsWrap">
-        <div class="opt" data-score="0"><span>ない</span><span class="score-chip">0点</span></div>
-        <div class="opt" data-score="1"><span>時々ある</span><span class="score-chip">1点</span></div>
-        <div class="opt" data-score="2"><span>よくある</span><span class="score-chip">2点</span></div>
+        <div class="opt" data-score="0" role="button" tabindex="0"><span>ない</span><span class="score-chip">0点</span></div>
+        <div class="opt" data-score="1" role="button" tabindex="0"><span>時々ある</span><span class="score-chip">1点</span></div>
+        <div class="opt" data-score="2" role="button" tabindex="0"><span>よくある</span><span class="score-chip">2点</span></div>
       </div>
 
       <div class="nav-row">
@@ -563,7 +628,7 @@
 
   </div>
 
-  <footer class="foot">五臓セルフチェック</footer>
+  <footer class="foot">作成：専門学校沖縄統合医療学院　鍼灸学科</footer>
 </div>
 
 <script>
@@ -682,6 +747,20 @@
     showScreen('start');
   });
 
+  document.getElementById('brandHome').addEventListener('click', function(){
+    current = 0;
+    answers = new Array(30).fill(null);
+    showScreen('start');
+  });
+  document.getElementById('brandHome').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      current = 0;
+      answers = new Array(30).fill(null);
+      showScreen('start');
+    }
+  });
+
   document.getElementById('backBtn').addEventListener('click', function(){
     if(current > 0){
       current -= 1;
@@ -689,12 +768,11 @@
     }
   });
 
-  document.getElementById('optionsWrap').addEventListener('click', function(e){
-    var opt = e.target.closest('.opt');
-    if(!opt) return;
-    var score = parseInt(opt.getAttribute('data-score'), 10);
+  function selectOption(score){
     answers[current] = score;
     renderQuestion();
+    var qBody = document.getElementById('qBody');
+    qBody.classList.add('fading');
     setTimeout(function(){
       if(current < 29){
         current += 1;
@@ -702,7 +780,21 @@
       } else {
         showResult();
       }
-    }, 220);
+    }, 200);
+  }
+
+  document.getElementById('optionsWrap').addEventListener('click', function(e){
+    var opt = e.target.closest('.opt');
+    if(!opt) return;
+    selectOption(parseInt(opt.getAttribute('data-score'), 10));
+  });
+
+  document.getElementById('optionsWrap').addEventListener('keydown', function(e){
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    var opt = e.target.closest('.opt');
+    if(!opt) return;
+    e.preventDefault();
+    selectOption(parseInt(opt.getAttribute('data-score'), 10));
   });
 
   function showScreen(name){
@@ -714,6 +806,7 @@
   }
 
   function renderQuestion(){
+    document.getElementById('qBody').classList.remove('fading');
     document.getElementById('progressFill').style.width = ((current) / 30 * 100) + '%';
     document.getElementById('progressText').textContent = (current+1) + ' / 30';
     document.getElementById('qNum').textContent = 'Q' + (current+1);
@@ -752,15 +845,29 @@
     return scores;
   }
 
+  function scoreLabel(val){
+    if(val <= 3) return {text:'安定', cls:'lv-stable'};
+    if(val <= 7) return {text:'やや乱れ', cls:'lv-mid'};
+    return {text:'乱れが目立つ', cls:'lv-high'};
+  }
+
   function showResult(){
     var scores = computeScores();
     var ranked = ORGAN_ORDER.slice().sort(function(a,b){ return scores[b]-scores[a]; });
     var topKey = ranked[0];
     var topOrgan = ORGANS[topKey];
+    var topScore = scores[topKey];
+    var tiedKeys = ranked.filter(function(k){ return k !== topKey && scores[k] === topScore; });
 
     document.getElementById('topOrganName').textContent = topOrgan.kanji;
     document.getElementById('topOrganName').style.color = 'var(' + topOrgan.colorVar + ')';
-    document.getElementById('topOrganYomi').textContent = topOrgan.kanji + '（' + topOrgan.element + '）の働きに乱れが出やすい傾向です';
+
+    var yomiText = topOrgan.kanji + '（' + topOrgan.element + '）の働きに乱れが出やすい傾向です';
+    if(tiedKeys.length > 0){
+      var tiedNames = tiedKeys.map(function(k){ return ORGANS[k].kanji; }).join('・');
+      yomiText += '（' + tiedNames + 'も同点でした）';
+    }
+    document.getElementById('topOrganYomi').textContent = yomiText;
 
     renderChart(scores);
     renderScoreList(scores, ranked);
@@ -775,12 +882,14 @@
     ranked.forEach(function(k){
       var organ = ORGANS[k];
       var pct = Math.round(scores[k] / 12 * 100);
+      var lv = scoreLabel(scores[k]);
       var row = document.createElement('div');
       row.className = 'score-row';
       row.innerHTML =
         '<span class="lbl" style="color:var(' + organ.colorVar + ')">' + organ.kanji + '</span>' +
-        '<span class="bar-track"><span class="bar-fill" style="width:' + pct + '%; background:var(' + organ.colorVar + ')"></span></span>' +
-        '<span class="val">' + scores[k] + ' / 12</span>';
+        '<span class="bar-track"><span class="bar-tick"></span><span class="bar-fill" style="width:' + pct + '%; background:var(' + organ.colorVar + ')"></span></span>' +
+        '<span class="val">' + scores[k] + ' / 12</span>' +
+        '<span class="lv-badge ' + lv.cls + '">' + lv.text + '</span>';
       wrap.appendChild(row);
     });
   }
@@ -811,11 +920,12 @@
         ? '<div class="tag-row">' + tagHtml + '</div>'
         : '<div class="no-symptom">該当する症状は見られませんでした。</div>';
 
+      var lv = scoreLabel(scores[k]);
       card.innerHTML =
         '<div class="organ-card-head">' +
           '<div class="seal">' + organ.kanji + '</div>' +
           '<div><div class="oc-title">' + organ.label + '（' + organ.element + '）</div>' +
-          '<div class="oc-score">' + scores[k] + ' / 12点</div></div>' +
+          '<div class="oc-score">' + scores[k] + ' / 12点　<span class="lv-badge ' + lv.cls + '">' + lv.text + '</span></div></div>' +
         '</div>' +
         '<p class="desc">' + organ.desc + '</p>' +
         '<div class="corr-table">' + corrHtml + '</div>' +
