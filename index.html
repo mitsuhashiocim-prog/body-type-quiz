@@ -711,15 +711,11 @@
     '塩辛いものが食べたい'
   ];
 
-  var QUESTION_IMAGES = {
-    0:'images/q01.jpg',
-    1:'images/q02.jpg',
-    2:'images/q03.jpg',
-    3:'images/q04.jpg',
-    4:'images/q05.jpg',
-    5:'images/q06.jpg',
-    6:'images/q07.jpg'
-  };
+  var QUESTION_IMAGES = {};
+  for(var qi=0; qi<30; qi++){
+    var num = String(qi+1).padStart(2,'0');
+    QUESTION_IMAGES[qi] = 'images/q' + num + '.jpg';
+  }
 
   var QUESTION_ORGAN = [];
   ORGAN_ORDER.forEach(function(k){
